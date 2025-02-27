@@ -1,0 +1,255 @@
+<div class="calendar-container">
+  <div class="calendar">
+    <div class="calendar-header">
+      <button mat-raised-button (click)="handlePrevious()">Previous</button>
+      <h2 class="calendar-header__text">{{ viewDate | date: "MMMM yyyy" }}</h2>
+      <button mat-raised-button (click)="handleNext()">Next</button>
+    </div>
+    <div class="calendar-toolbar">
+      <mat-slide-toggle
+        class="example-margin"
+        [color]="'primary'"
+        [checked]="false"
+        (change)="changeView($event)"
+      >
+        Week view
+      </mat-slide-toggle>
+
+      <button
+        mat-flat-button
+        [color]="'primary'"
+        (click)="handleAddEditEvent()"
+      >
+        Add event
+      </button>
+    </div>
+    <div
+      class="calendar-body"
+      [class.large]="viewType === ECalendarViewType.MONTH"
+    >
+      @switch (viewType) {
+        @case (ECalendarViewType.WEEK) {
+          <table class="week-calendar">
+            <thead>
+              <tr>
+                @for (day of MOK_DAYS_IN_WEEK; track $index) {
+                  <th class="mock-day">
+                    <div class="day-wrapper">
+                      <p class="day">{{ day }}</p>
+                    </div>
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                @for (day of currentWeek.days; track $index) {
+                  <td [ngClass]="{ today: day.isToday }">
+                    <div class="day-wrapper">
+                      <p
+                        class="day"
+                        [ngClass]="{
+                          today: day.isToday,
+                          grey: day.isNotInThisMonth,
+                        }"
+                      >
+                        {{ day.dayOfMonth }}
+                      </p>
+                    </div>
+
+                    @if (events$ | async; as events) {
+                      @if (events?.get(day.date)) {
+                        <div class="event-container">
+                          @for (
+                            event of events.get(day.date) | slice: 0 : 2;
+                            track event.id
+                          ) {
+                            <div
+                              [matTooltip]="event.is_holiday ? 'Holiday!' : ''"
+                              [class.holiday]="event.is_holiday"
+                              class="event-wrapper"
+                            >
+                              <p
+                                class="event"
+                                (click)="handleAddEditEvent(event, day.date)"
+                              >
+                                {{ event.name }}
+                              </p>
+
+                              <mat-icon
+                                class="event__icon"
+                                [fontIcon]="'close'"
+                                (click)="
+                                  handleDeleteEvent($event, event, day.date)
+                                "
+                              ></mat-icon>
+                            </div>
+                          }
+
+                          @if ((events.get(day.date)?.length ?? 0) > 2) {
+                            <div [matMenuTriggerFor]="menu" class="show-more">
+                              Show more ({{ events.get(day.date)?.length }})
+                            </div>
+
+                            <mat-menu #menu="matMenu" class="drop-down-menu">
+                              @for (
+                                event of events.get(day.date);
+                                track event.id
+                              ) {
+                                <div
+                                  class="item"
+                                  (click)="
+                                    $event.stopImmediatePropagation();
+                                    handleAddEditEvent(event, day.date)
+                                  "
+                                >
+                                  <p class="item__text">
+                                    {{ event.name }}
+                                  </p>
+
+                                  <mat-icon
+                                    [color]="'primary'"
+                                    [fontIcon]="'close'"
+                                    (click)="
+                                      handleDeleteEvent($event, event, day.date)
+                                    "
+                                  ></mat-icon>
+                                </div>
+                              }
+                            </mat-menu>
+                          }
+                        </div>
+                      }
+                    }
+                  </td>
+                }
+              </tr>
+            </tbody>
+          </table>
+        }
+
+        @case (ECalendarViewType.MONTH) {
+          <table class="month-calendar">
+            <thead>
+              <tr>
+                @for (day of MOK_DAYS_IN_WEEK; track $index) {
+                  <th>
+                    <div class="day-wrapper">
+                      <p class="day">{{ day }}</p>
+                    </div>
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (week of weeksInMonth; track $index) {
+                <tr>
+                  @for (day of week.days; track $index) {
+                    <td>
+                      <div class="day-wrapper">
+                        <p
+                          class="day"
+                          [ngClass]="{
+                            today: day.isToday,
+                            grey: day.isNotInThisMonth,
+                          }"
+                        >
+                          {{ day.dayOfMonth }}
+                        </p>
+
+                        @if (events$ | async; as events) {
+                          <div
+                            class="event-container"
+                            cdkDropList
+                            [cdkDropListData]="events.get(day.date) || []"
+                            (cdkDropListDropped)="handleDropEvent($event)"
+                          >
+                            @if (events?.get(day.date)) {
+                              @for (
+                                event of events.get(day.date) | slice: 0 : 2;
+                                track event.id
+                              ) {
+                                <div
+                                  cdkDrag
+                                  [matTooltip]="
+                                    event.is_holiday ? 'Holiday!' : ''
+                                  "
+                                  [class.holiday]="event.is_holiday"
+                                  class="event-wrapper"
+                                >
+                                  <p
+                                    class="event"
+                                    (click)="
+                                      handleAddEditEvent(event, day.date)
+                                    "
+                                  >
+                                    {{ event.name }}
+                                  </p>
+
+                                  <mat-icon
+                                    class="event__icon"
+                                    [fontIcon]="'close'"
+                                    (click)="
+                                      handleDeleteEvent($event, event, day.date)
+                                    "
+                                  ></mat-icon>
+                                </div>
+                              }
+
+                              @if ((events.get(day.date)?.length ?? 0) > 2) {
+                                <div
+                                  [matMenuTriggerFor]="menu"
+                                  class="show-more"
+                                >
+                                  Show more ({{ events.get(day.date)?.length }})
+                                </div>
+
+                                <mat-menu
+                                  #menu="matMenu"
+                                  class="drop-down-menu"
+                                >
+                                  @for (
+                                    event of events.get(day.date);
+                                    track event.id
+                                  ) {
+                                    <div
+                                      class="item"
+                                      (click)="
+                                        $event.stopImmediatePropagation();
+                                        handleAddEditEvent(event, day.date)
+                                      "
+                                    >
+                                      <p class="item__text">
+                                        {{ event.name }}
+                                      </p>
+
+                                      <mat-icon
+                                        [color]="'primary'"
+                                        [fontIcon]="'close'"
+                                        (click)="
+                                          handleDeleteEvent(
+                                            $event,
+                                            event,
+                                            day.date
+                                          )
+                                        "
+                                      ></mat-icon>
+                                    </div>
+                                  }
+                                </mat-menu>
+                              }
+                            }
+                          </div>
+                        }
+                      </div>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      }
+    </div>
+  </div>
+</div>

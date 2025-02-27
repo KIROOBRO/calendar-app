@@ -1,0 +1,52 @@
+@use "../../../../assets/styles/index";
+
+::ng-deep .confirm-modal {
+  @include index.base-modal(500px);
+
+  & .delete-modal-header {
+    padding: 24px 20px 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    &__icon {
+      cursor: pointer;
+    }
+  }
+
+  & .modal-body {
+    padding: 0 20px 24px 20px;
+  }
+
+  & .text {
+    &-main {
+      @include index.font-base(35px, 500, 40px, normal, index.$caveat);
+
+      color: index.$black;
+      margin-bottom: 20px;
+      text-align: center;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    &-secondary {
+      @include index.font-base(15px, 500, 20px, normal, index.$montserrat);
+
+      color: index.$black;
+      margin-bottom: 38px;
+      text-align: center;
+    }
+  }
+
+  & .actions {
+    gap: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & .btn {
+      width: 50%;
+    }
+  }
+}

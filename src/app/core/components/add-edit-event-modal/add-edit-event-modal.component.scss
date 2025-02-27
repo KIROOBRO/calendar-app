@@ -1,0 +1,11 @@
+@use "../../../../assets/styles/index";
+
+::ng-deep .add-edit-event-modal {
+  @include index.base-modal();
+
+  & .form-wrapper {
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+}
