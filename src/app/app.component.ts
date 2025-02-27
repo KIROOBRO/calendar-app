@@ -1,11 +1,18 @@
 import {
   CdkDrag,
   CdkDragDrop,
+  CdkDragHandle,
   CdkDropList,
-  moveItemInArray,
+  transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { AsyncPipe, DatePipe, NgClass, SlicePipe } from '@angular/common';
-import { Component, DestroyRef, OnInit, Self } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  OnInit,
+  Self,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -44,6 +51,7 @@ import { TCalendarViewType } from './core/types/t-calendar-view.type';
     MatMenu,
     CdkDropList,
     CdkDrag,
+    CdkDragHandle,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -62,10 +70,13 @@ export class AppComponent implements OnInit {
 
   public weeksInMonth: ICurrentWeek[] = [];
 
+  public allDropLists: string[] = [];
+
   constructor(
     @Self() private readonly destroyRef$: DestroyRef,
     private dialog: MatDialog,
     private alert: MatSnackBar,
+    private cdr: ChangeDetectorRef,
     private calendarService: CalendarService,
   ) {}
 
@@ -160,38 +171,32 @@ export class AppComponent implements OnInit {
   }
 
   public handleDropEvent(event: CdkDragDrop<any>): void {
-    console.log(event.container.data);
-    console.log(event.previousIndex);
-    console.log(event.currentIndex);
+    if (event.previousContainer !== event.container) {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
 
-    console.log(event);
-
-    if (event.previousContainer === event.container) {
-      //console.log(123);
-      //console.log(event.container.data);
-      //console.log(event.previousIndex);
-      //console.log(event.currentIndex);
-      //moveItemInArray(
-      //event.container.data,
-      //event.previousIndex,
-      //event.currentIndex,
-      //);
-    } else {
-      console.log(444);
-      //transferArrayItem(
-      //event.previousContainer.data,
-      //event.container.data,
-      //event.previousIndex,
-      //event.currentIndex
-      //);
+      this.calendarService.moveEventToAnotherDay(
+        event.previousContainer.id,
+        event.previousContainer.data,
+        event.container.id,
+        event.container.data,
+      );
     }
   }
 
   private generateCalendar(): void {
     if (this.viewType === 'month') {
       this.generateMonthCalendar();
+      this.allDropLists = this.weeksInMonth.flatMap((week) =>
+        week.days.map((day) => day.date),
+      );
     } else if (this.viewType === 'week') {
       this.generateWeekCalendar();
+      this.allDropLists = this.currentWeek.days.map((day) => day.date);
     }
   }
 

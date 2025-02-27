@@ -161,83 +161,76 @@
                           <div
                             class="event-container"
                             cdkDropList
+                            [id]="day.date"
+                            [cdkDropListConnectedTo]="allDropLists"
                             [cdkDropListData]="events.get(day.date) || []"
                             (cdkDropListDropped)="handleDropEvent($event)"
                           >
-                            @if (events?.get(day.date)) {
-                              @for (
-                                event of events.get(day.date) | slice: 0 : 2;
-                                track event.id
-                              ) {
-                                <div
-                                  cdkDrag
-                                  [matTooltip]="
-                                    event.is_holiday ? 'Holiday!' : ''
-                                  "
-                                  [class.holiday]="event.is_holiday"
-                                  class="event-wrapper"
+                            @for (
+                              event of events.get(day.date) | slice: 0 : 2;
+                              track $index
+                            ) {
+                              <div
+                                cdkDrag
+                                cdkDragHandle
+                                [matTooltip]="
+                                  event.is_holiday ? 'Holiday!' : ''
+                                "
+                                [class.holiday]="event.is_holiday"
+                                class="event-wrapper"
+                              >
+                                <p
+                                  class="event"
+                                  (click)="handleAddEditEvent(event, day.date)"
                                 >
-                                  <p
-                                    class="event"
+                                  {{ event.name }}
+                                </p>
+
+                                <mat-icon
+                                  class="event__icon"
+                                  [fontIcon]="'close'"
+                                  (click)="
+                                    handleDeleteEvent($event, event, day.date)
+                                  "
+                                ></mat-icon>
+                              </div>
+                            }
+
+                            @if ((events.get(day.date)?.length ?? 0) > 2) {
+                              <div [matMenuTriggerFor]="menu" class="show-more">
+                                Show more ({{ events.get(day.date)?.length }})
+                              </div>
+
+                              <mat-menu #menu="matMenu" class="drop-down-menu">
+                                @for (
+                                  event of events.get(day.date);
+                                  track event.id
+                                ) {
+                                  <div
+                                    class="item"
                                     (click)="
+                                      $event.stopImmediatePropagation();
                                       handleAddEditEvent(event, day.date)
                                     "
                                   >
-                                    {{ event.name }}
-                                  </p>
+                                    <p class="item__text">
+                                      {{ event.name }}
+                                    </p>
 
-                                  <mat-icon
-                                    class="event__icon"
-                                    [fontIcon]="'close'"
-                                    (click)="
-                                      handleDeleteEvent($event, event, day.date)
-                                    "
-                                  ></mat-icon>
-                                </div>
-                              }
-
-                              @if ((events.get(day.date)?.length ?? 0) > 2) {
-                                <div
-                                  [matMenuTriggerFor]="menu"
-                                  class="show-more"
-                                >
-                                  Show more ({{ events.get(day.date)?.length }})
-                                </div>
-
-                                <mat-menu
-                                  #menu="matMenu"
-                                  class="drop-down-menu"
-                                >
-                                  @for (
-                                    event of events.get(day.date);
-                                    track event.id
-                                  ) {
-                                    <div
-                                      class="item"
+                                    <mat-icon
+                                      [color]="'primary'"
+                                      [fontIcon]="'close'"
                                       (click)="
-                                        $event.stopImmediatePropagation();
-                                        handleAddEditEvent(event, day.date)
+                                        handleDeleteEvent(
+                                          $event,
+                                          event,
+                                          day.date
+                                        )
                                       "
-                                    >
-                                      <p class="item__text">
-                                        {{ event.name }}
-                                      </p>
-
-                                      <mat-icon
-                                        [color]="'primary'"
-                                        [fontIcon]="'close'"
-                                        (click)="
-                                          handleDeleteEvent(
-                                            $event,
-                                            event,
-                                            day.date
-                                          )
-                                        "
-                                      ></mat-icon>
-                                    </div>
-                                  }
-                                </mat-menu>
-                              }
+                                    ></mat-icon>
+                                  </div>
+                                }
+                              </mat-menu>
                             }
                           </div>
                         }

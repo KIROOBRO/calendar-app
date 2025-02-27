@@ -61,6 +61,18 @@ export class CalendarService {
     this.setItemInLocalStorage();
   }
 
+  public moveEventToAnotherDay(
+    prevDayKey: string,
+    prevDayNewValue: IEvent[],
+    newDayKey: string,
+    newDayNewValue: IEvent[],
+  ): void {
+    this.eventMap.set(prevDayKey, prevDayNewValue);
+    this.eventMap.set(newDayKey, newDayNewValue);
+    this.eventsSubject.next(this.eventMap);
+    this.setItemInLocalStorage();
+  }
+
   private setItemInLocalStorage(): void {
     localStorage.setItem(
       this.storageKey,
