@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "calendar-payever": {
+    "calendar-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/calendar-payever",
+            "outputPath": "dist/calendar-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "calendar-payever:build:production"
+              "buildTarget": "calendar-app:build:production"
             },
             "development": {
-              "buildTarget": "calendar-payever:build:development"
+              "buildTarget": "calendar-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -112,6 +112,9 @@
               "src/**/*.html"
             ]
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
