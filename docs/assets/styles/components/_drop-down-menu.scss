@@ -1,0 +1,41 @@
+@use "../vars";
+@use "../fonts";
+@use "../mixins";
+
+.drop-down-menu {
+  width: 100% !important;
+  min-height: 44px !important;
+  background: vars.$white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 8px rgba(142, 141, 208, 0.16);
+  overflow: hidden !important;
+
+  & .mat-mdc-menu-content {
+    padding: 0 !important;
+  }
+
+  & .item {
+    height: 44px;
+    padding: 0 16px;
+    background: vars.$white;
+    gap: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+
+    &__text {
+      @include mixins.font-base(15px, 500, 20px, normal, fonts.$montserrat);
+
+      width: calc(100% - 20px);
+      color: vars.$black;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    &:hover {
+      background: vars.$blue-hover;
+    }
+  }
+}
