@@ -16,8 +16,10 @@ import {
   DateAdapter,
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE,
+  provideNativeDateAdapter,
 } from '@angular/material/core';
 import {
+  MatDatepickerModule,
   MatDatepickerToggle,
   MatDateRangeInput,
   MatDateRangePicker,
@@ -29,7 +31,11 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import {
+  MatFormField,
+  MatFormFieldModule,
+  MatLabel,
+} from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import {
@@ -44,14 +50,13 @@ import { generateUniqueId } from '../../utils/functions';
 
 export const MY_FORMATS = {
   parse: {
-    dateInput: 'LL',
+    dateInput: 'DD.MM.YYYY',
   },
   display: {
     dateInput: 'DD.MM.YYYY',
-    monthYearLabel: 'LL',
-    monthLabel: 'MMMM',
+    monthYearLabel: 'MMM YYYY',
     dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
   },
 };
 
@@ -67,24 +72,21 @@ export const MY_FORMATS = {
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    //provideNativeDateAdapter(),
   ],
   standalone: true,
   imports: [
     MatIcon,
     MatInput,
-    MatLabel,
     MatButton,
-    MatEndDate,
     MatCheckbox,
-    MatStartDate,
-    MatFormField,
     MatIconButton,
     MatDialogModule,
-    MatDateRangeInput,
-    MatDateRangePicker,
     ReactiveFormsModule,
-    MatDatepickerToggle,
     ControlConverterPipe,
+    MatDatepickerToggle,
+    MatFormFieldModule,
+    MatDatepickerModule,
   ],
 })
 export class AddEditEventModalComponent implements OnInit {

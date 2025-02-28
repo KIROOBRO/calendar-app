@@ -55,16 +55,23 @@
                       >
                         {{ day.dayOfMonth }}
                       </p>
-                    </div>
 
-                    @if (events$ | async; as events) {
-                      @if (events?.get(day.date)) {
-                        <div class="event-container">
+                      @if (events$ | async; as events) {
+                        <div
+                          class="event-container"
+                          cdkDropList
+                          [id]="day.date"
+                          [cdkDropListConnectedTo]="allDropLists"
+                          [cdkDropListData]="events.get(day.date) || []"
+                          (cdkDropListDropped)="handleDropEvent($event)"
+                        >
                           @for (
                             event of events.get(day.date) | slice: 0 : 2;
                             track event.id
                           ) {
                             <div
+                              cdkDrag
+                              cdkDragHandle
                               [matTooltip]="event.is_holiday ? 'Holiday!' : ''"
                               [class.holiday]="event.is_holiday"
                               class="event-wrapper"
@@ -120,7 +127,7 @@
                           }
                         </div>
                       }
-                    }
+                    </div>
                   </td>
                 }
               </tr>

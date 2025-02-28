@@ -30,20 +30,16 @@
 
     <mat-form-field>
       <mat-label>Enter a date range</mat-label>
-      <mat-date-range-input [required]="true" [rangePicker]="picker">
+      <mat-date-range-input [formGroup]="formGroup" [rangePicker]="picker">
         <input
           matStartDate
           placeholder="Start date"
-          [formControl]="
-            formGroup.get(EControlNames.START_DATE) | controlConverter
-          "
+          [formControlName]="EControlNames.START_DATE"
         />
         <input
           matEndDate
           placeholder="End date"
-          [formControl]="
-            formGroup.get(EControlNames.END_DATE) | controlConverter
-          "
+          [formControlName]="EControlNames.END_DATE"
         />
       </mat-date-range-input>
       <mat-datepicker-toggle
